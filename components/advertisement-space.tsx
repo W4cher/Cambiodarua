@@ -1,4 +1,9 @@
-export default function AdvertisementSpace() {
+interface AdvertisementSpaceProps {
+  maxAds?: number
+  showLastTwo?: boolean
+}
+
+export default function AdvertisementSpace({ maxAds, showLastTwo }: AdvertisementSpaceProps) {
   const ads = [
     {
       id: 1,
@@ -20,12 +25,23 @@ export default function AdvertisementSpace() {
     },
   ]
 
+  // Determinar quais anúncios mostrar
+  let displayAds
+  if (showLastTwo) {
+    // Mostrar apenas os dois últimos anúncios
+    displayAds = ads.slice(-2)
+  } else if (maxAds) {
+    // Limitar o número de anúncios se maxAds for fornecido
+    displayAds = ads.slice(0, maxAds)
+  } else {
+    // Mostrar todos os anúncios
+    displayAds = ads
+  }
+
   return (
     <div className="p-2">
-      <div className="bg-gray-200 text-gray-700 py-2 px-3 text-center font-bold text-sm rounded-t-md">PUBLICIDADE</div>
-
-      <div className="space-y-3 mt-3">
-        {ads.map((ad) => (
+      <div className="space-y-3">
+        {displayAds.map((ad) => (
           <div
             key={ad.id}
             className="rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"

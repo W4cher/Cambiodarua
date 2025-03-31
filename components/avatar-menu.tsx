@@ -26,6 +26,14 @@ export default function AvatarMenu({ avatarUrl, username = "Usuário", onLogout 
     router.push("/profile")
   }
 
+  const handleLogout = () => {
+    // Chamar a função onLogout passada como prop (para limpar estado, cookies, etc.)
+    onLogout()
+
+    // Redirecionar para a página de login
+    router.push("/auth/login")
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -59,7 +67,7 @@ export default function AvatarMenu({ avatarUrl, username = "Usuário", onLogout 
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onLogout}>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sair</span>
         </DropdownMenuItem>

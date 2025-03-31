@@ -92,3 +92,15 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Estilos para o comportamento de sticky do sidebar direito */
+.right-sidebar-sticky {
+  position: relative;
+  transition: position 0.3s ease;
+}
+
+.right-sidebar-sticky.is-sticky {
+  position: sticky;
+  top: 80px;
+}
+

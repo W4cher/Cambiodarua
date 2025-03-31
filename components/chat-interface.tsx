@@ -66,6 +66,28 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<{ text: string; sender: "user" | "recipient"; time: string }[]>([])
   const [newMessage, setNewMessage] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [isMobile, setIsMobile] = useState(false)
+  const [sidebarVisible, setSidebarVisible] = useState(true)
+
+  // Verificar se é dispositivo móvel
+  useEffect(() => {
+    const checkIfMobile = () => {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      setSidebarVisible(!mobile) // Esconder sidebar automaticamente em dispositivos móveis
+    }
+
+    // Verificar inicialmente
+    checkIfMobile()
+
+    // Adicionar listener para redimensionamento
+    window.addEventListener("resize", checkIfMobile)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkIfMobile)
+    }
+  }, [])
 
   // Carregar mensagens quando uma conversa é selecionada
   useEffect(() => {
@@ -103,8 +125,13 @@ export default function ChatInterface() {
       } else {
         setMessages([{ text: `Olá ${conversation?.name}, ainda está disponível?`, sender: "user", time: currentTime }])
       }
+
+      // Em dispositivos móveis, esconder a lista de conversas quando uma conversa é selecionada
+      if (isMobile) {
+        setSidebarVisible(false)
+      }
     }
-  }, [activeConversation]) // Remova conversations das dependências
+  }, [activeConversation, isMobile])
 
   // Rolar para o final da conversa quando novas mensagens são adicionadas
   useEffect(() => {
@@ -145,11 +172,31 @@ export default function ChatInterface() {
     return conversations.find((c) => c.id === activeConversation) || null
   }
 
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible)
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-6xl mx-auto my-4">
-      <div className="flex h-[600px]">
-        {/* Lista de conversas (lado esquerdo) - Fixado em 2/5 */}
-        <div className="w-2/5 border-r flex flex-col">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-6xl mx-auto my-4 w-full">
+      <div className="flex h-[600px] relative">
+        {/* Botão para mostrar/esconder sidebar em dispositivos móveis */}
+        {isMobile && activeConversation && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-2 left-2 z-10 h-8 w-8 bg-white shadow-sm rounded-full"
+            onClick={toggleSidebar}
+          >
+            {sidebarVisible ? <ArrowLeft className="h-4 w-4" /> : <Search className="h-4 w-4" />}
+          </Button>
+        )}
+
+        {/* Lista de conversas (lado esquerdo) */}
+        <div
+          className={`${sidebarVisible ? "block" : "hidden"} ${
+            isMobile ? "absolute inset-0 z-20 bg-white" : "w-2/5"
+          } border-r flex flex-col`}
+        >
           <div className="p-3 border-b flex items-center justify-between">
             <Button variant="ghost" size="sm" className="h-8 w-8 mr-2" onClick={() => (window.location.href = "/")}>
               <ArrowLeft className="h-4 w-4" />
@@ -336,13 +383,23 @@ export default function ChatInterface() {
           </Tabs>
         </div>
 
-        {/* Área de chat (lado direito) - Fixado em 3/5 */}
-        <div className="w-3/5 flex flex-col">
+        {/* Área de chat (lado direito) */}
+        <div className={`${isMobile && sidebarVisible ? "hidden" : "flex"} ${isMobile ? "w-full" : "w-3/5"} flex-col`}>
           {activeConversation ? (
             <>
               {/* Header do chat */}
               <div className="bg-blue-600 text-white p-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
+                  {isMobile && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white h-8 w-8 hover:bg-blue-700 mr-1"
+                      onClick={toggleSidebar}
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Avatar className="h-8 w-8 border border-white">
                     <AvatarImage
                       src={`/placeholder.svg?height=32&width=32&text=${getActiveConversation()?.name[0]}`}
@@ -433,7 +490,9 @@ export default function ChatInterface() {
               </div>
               <h3 className="text-xl font-medium text-gray-800 mb-2">Suas conversas</h3>
               <p className="text-gray-500 text-center max-w-xs">
-                Selecione uma conversa à esquerda para começar a negociar ou continue navegando nas ofertas disponíveis.
+                {isMobile
+                  ? "Toque no botão de menu para ver suas conversas"
+                  : "Selecione uma conversa à esquerda para começar a negociar ou continue navegando nas ofertas disponíveis."}
               </p>
             </div>
           )}
