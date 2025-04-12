@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { loginUser } from "@/services/authApi"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -35,9 +36,12 @@ export default function LoginPage() {
         throw new Error("Por favor, preencha todos os campos")
       }
 
+      const login = await loginUser({email, password})
       // Simulação de sucesso - em um app real, você verificaria as credenciais
-      console.log("Login bem-sucedido:", { email })
-      router.push("/")
+      if (login?.status == 200) {
+        console.log("Login bem-sucedido:", { login })
+        router.push("/")
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocorreu um erro ao fazer login")
     } finally {
