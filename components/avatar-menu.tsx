@@ -75,4 +75,3 @@ export default function AvatarMenu({ avatarUrl, username = "Usuário", onLogout 
     </DropdownMenu>
   )
 }
-

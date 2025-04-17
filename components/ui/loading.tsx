@@ -12,4 +12,3 @@ export function LoadingSpinner({ size = 24, className = "" }: LoadingSpinnerProp
     </div>
   )
 }
-

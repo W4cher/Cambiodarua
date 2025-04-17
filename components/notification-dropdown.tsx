@@ -122,4 +122,3 @@ export default function NotificationDropdown({ triggerIcon, hasUnread = false }:
     </Popover>
   )
 }
-

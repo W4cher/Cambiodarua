@@ -5,18 +5,28 @@ import { Plus, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ExchangeListings from "./exchange-listings"
 import ExchangeRates from "./user-balances"
-import ExchangeInfo from "./user-transactions"
+import CurrencyConverter from "./currency-converter"
 import AdvertisementSpace from "./advertisement-space"
 import CreateCheckModal from "./create-check-modal"
 import ChatInterface from "./chat-interface"
 import Header from "./header"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
+// Importando os skeletons
+import CurrencyConverterSkeleton from "./skeletons/currency-converter-skeleton"
+import ExchangeRatesSkeleton from "./skeletons/exchange-rates-skeleton"
+import ExchangeListingsSkeleton from "./skeletons/exchange-listings-skeleton"
+import AdvertisementSkeleton from "./skeletons/advertisement-skeleton"
+
 export default function CurrencyExchangeApp() {
   const [isCreateCheckOpen, setIsCreateCheckOpen] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  // Adicionar um estado compartilhado para a fonte de taxa (kinguilas ou bancos)
+  // Adicionar após a declaração de outros estados
+  const [rateSource, setRateSource] = useState<"kinguilas" | "bancos">("kinguilas")
 
   // Verificar se é dispositivo móvel
   useEffect(() => {
@@ -34,6 +44,17 @@ export default function CurrencyExchangeApp() {
     return () => {
       window.removeEventListener("resize", checkIfMobile)
     }
+  }, [])
+
+  // Simular carregamento de dados
+  useEffect(() => {
+    // Simular um tempo de carregamento entre 1.5 e 2.5 segundos
+    const loadingTime = Math.random() * 1000 + 1500
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, loadingTime)
+
+    return () => clearTimeout(timer)
   }, [])
 
   // Adicionar event listener para o botão de chat no header
@@ -85,14 +106,22 @@ export default function CurrencyExchangeApp() {
   // Conteúdo do sidebar esquerdo
   const LeftSidebarContent = () => (
     <>
-      <ExchangeRates />
+      {/* Taxas de câmbio em cima, conversor embaixo */}
+      <div>
+        {isLoading ? (
+          <ExchangeRatesSkeleton />
+        ) : (
+          <ExchangeRates rateSource={rateSource} setRateSource={setRateSource} />
+        )}
+      </div>
       <div className="mt-3">
-        <ExchangeInfo />
+        {isLoading ? <CurrencyConverterSkeleton /> : <CurrencyConverter rateSource={rateSource} />}
       </div>
       <div className="p-3 mt-3">
         <Button
           className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center gap-2 py-1 h-8 text-xs"
           onClick={() => setIsCreateCheckOpen(true)}
+          disabled={isLoading}
         >
           <Plus className="h-3 w-3" />
           <span className="flex items-center gap-1">
@@ -143,33 +172,7 @@ export default function CurrencyExchangeApp() {
               <div className="hidden md:block w-[300px] mr-4">
                 <div className="sticky top-16">
                   <div className="bg-white rounded-lg shadow-sm">
-                    <ExchangeRates />
-                    <div className="mt-3">
-                      <ExchangeInfo />
-                    </div>
-                    <div className="p-3 mt-3">
-                      <Button
-                        className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center gap-2 py-1 h-8 text-xs"
-                        onClick={() => setIsCreateCheckOpen(true)}
-                      >
-                        <Plus className="h-3 w-3" />
-                        <span className="flex items-center gap-1">
-                          <span className="bg-white text-green-600 p-0.5 rounded">
-                            <svg
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
-                              <path d="M3 10H21" stroke="currentColor" strokeWidth="2" />
-                            </svg>
-                          </span>
-                          Criar Check
-                        </span>
-                      </Button>
-                    </div>
+                    <LeftSidebarContent />
                   </div>
                 </div>
               </div>
@@ -177,7 +180,7 @@ export default function CurrencyExchangeApp() {
               {/* Main Content - Flexible width */}
               <div className="flex-1">
                 <div className="bg-white rounded-lg shadow-sm">
-                  <ExchangeListings isMobile={isMobile} />
+                  {isLoading ? <ExchangeListingsSkeleton /> : <ExchangeListings isMobile={isMobile} />}
                 </div>
               </div>
 
@@ -185,7 +188,7 @@ export default function CurrencyExchangeApp() {
               <div className="hidden md:block w-[300px] ml-4">
                 <div className="right-sidebar-sticky">
                   <div className="bg-white rounded-lg shadow-sm mb-4">
-                    <AdvertisementSpace showLastTwo={true} />
+                    {isLoading ? <AdvertisementSkeleton maxAds={2} /> : <AdvertisementSpace showLastTwo={true} />}
                   </div>
                 </div>
               </div>
@@ -200,6 +203,7 @@ export default function CurrencyExchangeApp() {
           <Button
             className="h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 shadow-lg"
             onClick={() => setIsCreateCheckOpen(true)}
+            disabled={isLoading}
           >
             <Plus className="h-5 w-5" />
           </Button>
@@ -211,4 +215,3 @@ export default function CurrencyExchangeApp() {
     </div>
   )
 }
-

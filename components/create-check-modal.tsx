@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { createTransaction } from "@/services/transaction"
 
 interface CreateCheckModalProps {
   isOpen: boolean
@@ -91,40 +90,19 @@ export default function CreateCheckModal({ isOpen, onClose }: CreateCheckModalPr
     setBackgroundImage(null)
   }
 
-  const handleSubmit = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const sellerId = user?._id;
-  
-      if (!sellerId) {
-        console.error("Usuário não autenticado.");
-        return;
-      }
-  
-      const payload = {
-        amount: Number(amount),
-        exchangeRate: Number(rate),
-        currency: "EUR", // Add dynamic selection later if needed
-        exchangeCurrency: "AOA", // Add dynamic selection later if needed
-        originCountry: selectedSourceCountry,
-        originBank: selectedSourceBank,
-        destinationCountry: selectedDestCountry,
-        destinationBank: selectedDestBank,
-        paymentMethods: ["Transferencia"], // Optional: make dynamic
-        backgroundImage: backgroundImage ?? undefined,
-        seller: sellerId, // ✅ set seller here
-      };
-  
-      await createTransaction(payload);
-      console.log("Transação criada com sucesso");
-      onClose();
-    } catch (error) {
-      console.error("Erro ao criar transação:", error);
-    }
-  };
-  
-
-
+  const handleSubmit = () => {
+    // Aqui você implementaria a lógica para salvar o check
+    console.log({
+      amount,
+      rate,
+      sourceCountry: selectedSourceCountry,
+      destCountry: selectedDestCountry,
+      sourceBank: selectedSourceBank,
+      destBank: selectedDestBank,
+      backgroundImage,
+    })
+    onClose()
+  }
 
   if (!isOpen) return null
 
@@ -143,8 +121,9 @@ export default function CreateCheckModal({ isOpen, onClose }: CreateCheckModalPr
         <ScrollArea className="flex-1 overflow-auto">
           <div className="p-4">
             <Tabs defaultValue="venda" className="w-full">
-              <TabsList className="grid w-full grid-cols-1 mb-4">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="venda">Venda</TabsTrigger>
+                <TabsTrigger value="compra">Compra</TabsTrigger>
               </TabsList>
 
               <TabsContent value="venda" className="space-y-4">
@@ -350,4 +329,3 @@ export default function CreateCheckModal({ isOpen, onClose }: CreateCheckModalPr
     </div>
   )
 }
-
