@@ -76,4 +76,3 @@ export default function ShareModal({ isOpen, onClose, title, url }: ShareModalPr
     </div>
   )
 }
-

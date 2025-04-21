@@ -1,6 +1,14 @@
+"use client"
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
-export default function ExchangeRates() {
+export default function ExchangeRates({
+  rateSource,
+  setRateSource,
+}: {
+  rateSource: "kinguilas" | "bancos"
+  setRateSource: (source: "kinguilas" | "bancos") => void
+}) {
   const currencies = [
     {
       code: "EUR",
@@ -26,23 +34,23 @@ export default function ExchangeRates() {
     <div className="overflow-hidden" id="exchange-rates-section">
       <div className="bg-gray-100 text-gray-700 py-2 px-3 text-center font-bold text-sm border-b">TAXAS DE CÂMBIO</div>
 
-      <Tabs defaultValue="divisas">
+      <Tabs value={rateSource} onValueChange={(value) => setRateSource(value as "kinguilas" | "bancos")}>
         <TabsList className="w-full grid grid-cols-2 h-8 bg-gray-50">
           <TabsTrigger
-            value="divisas"
+            value="kinguilas"
             className="text-xs data-[state=active]:border-b-2 data-[state=active]:border-gray-500 data-[state=active]:text-gray-700 rounded-none"
           >
             KINGUILAS
           </TabsTrigger>
           <TabsTrigger
-            value="notas"
+            value="bancos"
             className="text-xs data-[state=active]:border-b-2 data-[state=active]:border-gray-500 data-[state=active]:text-gray-700 rounded-none"
           >
             BANCOS
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="divisas" className="p-0">
+        <TabsContent value="kinguilas" className="p-0">
           <div className="grid grid-cols-1 gap-2 p-2">
             {currencies.map((currency) => (
               <div
@@ -63,7 +71,7 @@ export default function ExchangeRates() {
           </div>
         </TabsContent>
 
-        <TabsContent value="notas" className="p-0">
+        <TabsContent value="bancos" className="p-0">
           <div className="grid grid-cols-1 gap-2 p-2">
             {currencies.map((currency) => (
               <div
@@ -89,4 +97,3 @@ export default function ExchangeRates() {
     </div>
   )
 }
-

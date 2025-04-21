@@ -67,4 +67,3 @@ export default function AdvertisementSpace({ maxAds, showLastTwo }: Advertisemen
     </div>
   )
 }
-

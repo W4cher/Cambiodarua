@@ -12,4 +12,3 @@ export default function LoadingSpinner({ size = 24, className = "" }: LoadingSpi
     </div>
   )
 }
-

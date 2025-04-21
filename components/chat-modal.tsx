@@ -143,4 +143,3 @@ export default function ChatModal({ isOpen, onClose, recipient }: ChatModalProps
     </div>
   )
 }
-
