@@ -67,7 +67,7 @@ export default function RegisterPage() {
     }
   }
 
-  const handleInitialRegistration = async () => {
+  const handleInitialRegistration = async (e: any) => {
     // Validate basic registration fields
     if (!formData.name || !formData.email || !formData.password) {
       setError("Por favor, preencha todos os campos obrigatórios")
@@ -97,6 +97,7 @@ export default function RegisterPage() {
     try {
       // Simulate registration API call
       // In a real app, this would be an API call to register the user
+      await handleSubmit(e)
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Move to the next step after successful registration
@@ -151,7 +152,7 @@ export default function RegisterPage() {
     }
   }
 
-  const nextTab = () => {
+  const nextTab = (e: React.FormEvent) => {
     if (activeTab === "personal") {
       // Validar campos pessoais antes de avançar
       if (!formData.name || !formData.email || !formData.password || formData.password !== formData.confirmPassword) {
@@ -160,6 +161,7 @@ export default function RegisterPage() {
       }
       setActiveTab("profile")
     } else if (activeTab === "profile") {
+      handleSubmit(e)
       setActiveTab("verification")
     }
 
@@ -199,7 +201,7 @@ export default function RegisterPage() {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form>
               {registrationStep === "initial" ? (
                 // Initial registration options (social or manual)
                 <div className="space-y-6">

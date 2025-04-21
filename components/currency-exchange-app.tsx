@@ -11,6 +11,7 @@ import CreateCheckModal from "./create-check-modal"
 import ChatInterface from "./chat-interface"
 import Header from "./header"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import ChatPage from "@/app/chat/page"
 
 export default function CurrencyExchangeApp() {
   const [isCreateCheckOpen, setIsCreateCheckOpen] = useState(false)
@@ -119,6 +120,7 @@ export default function CurrencyExchangeApp() {
         <div className="flex max-w-[1200px] w-full">
           {showChat ? (
             <ChatInterface />
+            // <ChatPage />
           ) : (
             <>
               {/* Botão do menu para dispositivos móveis */}
